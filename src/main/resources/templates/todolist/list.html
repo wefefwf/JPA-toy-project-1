@@ -3,138 +3,333 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>포근한 할 일 기록장</title>
+  <title>TodoList</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-color: #fffdf5;      /* 아주 연한 크림색 */
-      --card-bg: #ffffff;
-      --point-color: #a8ba9a;   /* 차분한 세이지 그린 */
-      --accent-color: #e9ecef;
-      --text-main: #4a4a4a;
-      --text-muted: #8e8e8e;
+      --bg: #c5d8b5;
+      --bg2: #b8ceaa;
+      --card-bg: rgba(255,255,255,.25);
+      --card-hover: rgba(255,255,255,.4);
+      --card-border: rgba(255,255,255,.3);
+      --red: #e04a3c;
+      --red-light: rgba(224,74,60,.12);
+      --red-bg: #e04a3c;
+      --ink: #2d3a28;
+      --ink2: #4a5a42;
+      --ink3: rgba(45,58,40,.5);
+      --white: #fff;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background-color: var(--bg-color);
-      font-family: 'Noto Sans KR', sans-serif;
-      color: var(--text-main);
-      letter-spacing: -0.02em;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      font-family: 'Outfit', -apple-system, sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      padding-bottom: 40px;
     }
 
     .container {
-      max-width: 700px;
+      max-width: 520px;
+      padding: 0 20px;
     }
 
+    /* ===== 타이틀 ===== */
     h1 {
       font-weight: 700;
-      color: var(--point-color);
-      text-align: center;
-      margin-top: 50px;
-      margin-bottom: 40px;
-      letter-spacing: -1px;
+      font-size: 2rem;
+      color: var(--ink);
+      text-align: left;
+      margin-top: 48px;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
     }
 
-    /* 카드 스타일링 */
+    h1::after {
+      content: "할 일을 기록하고 하루를 정리하세요";
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--ink3);
+      margin-top: 6px;
+      letter-spacing: 0;
+    }
+
+    /* ===== 캘린더 ===== */
+    .calendar {
+      background: rgba(255,255,255,.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+
+    .cal-month {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .cal-nav {
+      display: flex;
+      gap: 4px;
+    }
+
+    .cal-nav button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.4);
+      background: rgba(255,255,255,.2);
+      color: var(--ink2);
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cal-nav button:hover {
+      background: rgba(255,255,255,.5);
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      text-align: center;
+    }
+
+    .cal-dow {
+      font-size: 0.55rem;
+      font-weight: 600;
+      color: var(--ink3);
+      padding: 4px 0 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .cal-day {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--ink2);
+      padding: 6px 0;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      transition: all 0.2s;
+      cursor: default;
+    }
+
+    .cal-day.today {
+      background: var(--red);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .cal-day.other {
+      color: rgba(45,58,40,.2);
+    }
+
+    .cal-day.sun {
+      color: var(--red);
+    }
+
+    .cal-day.sun.other {
+      color: rgba(224,74,60,.2);
+    }
+
+    .cal-day.today.sun {
+      color: #fff;
+    }
+
+    /* ===== 구분선 ===== */
+    .cal-divider {
+      height: 1px;
+      background: rgba(255,255,255,.3);
+      margin: 20px 0 4px;
+    }
+
+    /* ===== 카드 리스트 ===== */
+    .row.g-4 {
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    .row.g-4::before {
+      content: none;
+    }
+
+    /* ===== 카드 ===== */
     .diary-card {
-      background-color: var(--card-bg);
-      border: none;
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(168, 186, 154, 0.15); /* 초록빛이 도는 부드러운 그림자 */
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
+      backdrop-filter: blur(10px);
     }
 
     .diary-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 6px;
-      background-color: var(--point-color);
-      opacity: 0.6;
+      content: none;
+    }
+
+    .diary-card .d-flex {
+      padding: 18px 20px;
     }
 
     .diary-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(168, 186, 154, 0.25);
+      background: var(--card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,.06);
     }
 
-    /* 할 일 제목 */
+    /* ===== 제목 ===== */
     .todo-title {
-      font-size: 1.15rem;
-      font-weight: 500;
-      margin-bottom: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 3px;
+      line-height: 1.4;
     }
 
     .todo-link {
       text-decoration: none;
-      color: var(--text-main);
+      color: var(--ink);
       transition: color 0.2s;
     }
 
     .todo-link:hover {
-      color: var(--point-color);
+      color: var(--red);
     }
 
-    /* 날짜 표시 */
+    /* ===== 날짜 ===== */
     .todo-date {
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--ink3);
       display: flex;
       align-items: center;
     }
 
     .todo-date::before {
-      content: "🗓";
-      margin-right: 5px;
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      opacity: 0.5;
+      margin-right: 6px;
     }
 
-    /* 배지 스타일 */
+    /* ===== 배지 ===== */
     .badge-no {
-      font-size: 0.75rem;
-      padding: 6px 12px;
-      border-radius: 50px;
-      background-color: #f8f9fa;
-      color: var(--point-color);
-      border: 1px solid #eee;
-    }
-
-    /* 글쓰기 버튼 */
-    .btn-register {
-      background-color: var(--point-color);
-      border: none;
-      border-radius: 50px;
-      padding: 12px 30px;
+      font-size: 0.7rem;
       font-weight: 600;
-      color: white;
-      box-shadow: 0 4px 12px rgba(168, 186, 154, 0.4);
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: var(--red-light);
+      color: var(--red);
+      border: none;
+      letter-spacing: 0.5px;
       transition: all 0.3s;
     }
 
-    .btn-register:hover {
-      background-color: #8fa182;
-      transform: scale(1.05);
-      color: white;
+    .diary-card:hover .badge-no {
+      background: var(--red);
+      color: var(--white);
     }
 
-    /* 리스트 간격 조절 */
-    .row.g-4 {
-      padding: 10px;
+    /* ===== 버튼 ===== */
+    .btn-register {
+      background: var(--red-bg);
+      border: none;
+      border-radius: 50px;
+      padding: 14px 32px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--white);
+      box-shadow: 0 4px 16px rgba(224,74,60,.3);
+      transition: all 0.3s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-register:hover {
+      background: #c9403a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(224,74,60,.35);
+      color: var(--white);
+    }
+
+    .btn-register:active {
+      transform: translateY(0);
+    }
+
+    .mt-5 {
+      margin-top: 2rem !important;
+    }
+
+    /* ===== 빈 상태 ===== */
+    .row.g-4:empty::after {
+      content: "아직 할 일이 없어요";
+      display: block;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--ink3);
+      padding: 50px 0;
+    }
+
+    /* ===== 반응형 ===== */
+    @media (max-width: 576px) {
+      h1 { font-size: 1.7rem; margin-top: 32px; }
+      .diary-card .d-flex { padding: 15px 16px; }
+      .todo-title { font-size: 0.9rem; }
     }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>오늘의 조각들</h1>
+    <h1>TodoList</h1>
+
+    <!-- 캘린더 -->
+    <div class="calendar">
+      <div class="cal-header">
+        <span class="cal-month" id="calMonth"></span>
+        <div class="cal-nav">
+          <button onclick="changeMonth(-1)">◀</button>
+          <button onclick="changeMonth(1)">▶</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <div class="cal-divider"></div>
 
     <div class="row g-4">
       <div class="col-12" th:each="dto : ${list}">
@@ -164,5 +359,62 @@
       </a>
     </div>
   </div>
+
+  <script>
+    var currentDate = new Date();
+    var today = new Date();
+    var dow = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+    function renderCalendar() {
+      var year = currentDate.getFullYear();
+      var month = currentDate.getMonth();
+      var firstDay = new Date(year, month, 1).getDay();
+      var lastDate = new Date(year, month + 1, 0).getDate();
+      var prevLastDate = new Date(year, month, 0).getDate();
+
+      document.getElementById('calMonth').textContent =
+        year + '년 ' + (month + 1) + '월';
+
+      var html = '';
+      for (var i = 0; i < 7; i++) {
+        html += '<div class="cal-dow">' + dow[i] + '</div>';
+      }
+
+      // 이전 달
+      for (var i = firstDay - 1; i >= 0; i--) {
+        var cls = 'cal-day other';
+        if ((firstDay - 1 - i) % 7 === 0) cls += ' sun';
+        html += '<div class="' + cls + '">' + (prevLastDate - i) + '</div>';
+      }
+
+      // 이번 달
+      for (var d = 1; d <= lastDate; d++) {
+        var dayOfWeek = new Date(year, month, d).getDay();
+        var cls = 'cal-day';
+        if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+          cls += ' today';
+        }
+        if (dayOfWeek === 0) cls += ' sun';
+        html += '<div class="' + cls + '">' + d + '</div>';
+      }
+
+      // 다음 달
+      var totalCells = firstDay + lastDate;
+      var remaining = (7 - totalCells % 7) % 7;
+      for (var i = 1; i <= remaining; i++) {
+        var cls = 'cal-day other';
+        html += '<div class="' + cls + '">' + i + '</div>';
+      }
+
+      document.getElementById('calGrid').innerHTML = html;
+    }
+
+    function changeMonth(dir) {
+      currentDate.setMonth(currentDate.getMonth() + dir);
+      renderCalendar();
+    }
+
+    renderCalendar();
+  </script>
 </body>
 </html>
