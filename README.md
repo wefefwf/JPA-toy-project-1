@@ -56,7 +56,7 @@
 |------|------|
 | Backend | Spring Boot, Java, JPA |
 | Frontend | HTML5, CSS3, Bootstrap 5 |
-| Database | Oracle |
+| Database | MariaDB |
 | Font | Google Fonts — Outfit |
 
 ---
